@@ -12,7 +12,7 @@ class TradingStyle(str, Enum):
 
 
 class InstrumentCategory(str, Enum):
-    """Allowed instrument categories for the initial v1 market universe."""
+    """Instrument categories allowed in the initial v1 universe."""
 
     EQUITY = "equity"
     ETF = "etf"
@@ -20,7 +20,7 @@ class InstrumentCategory(str, Enum):
 
 @dataclass(frozen=True, slots=True)
 class Instrument:
-    """Metadata for each permitted market instrument in the India cash-equity universe."""
+    """Metadata for a permitted Indian stock or exchange-traded fund."""
 
     symbol: str
     name: str
@@ -45,7 +45,6 @@ EXCLUDED_ASSET_CLASSES: tuple[str, ...] = (
     "COMMODITY",
     "CURRENCY",
     "MUTUAL_FUND",
-    "ETF",
     "UNLISTED",
     "DERIVATIVE",
 )
@@ -55,7 +54,7 @@ SUPPORTED_STOCK_EXCHANGES: tuple[str, ...] = ("NSE", "BSE")
 
 @dataclass(frozen=True, slots=True)
 class MarketUniverse:
-    """Scope and loaded listing catalog for the approved paper-trading universe."""
+    """Scope and loaded listing catalog for the paper-trading universe."""
 
     name: str
     market: str
@@ -67,7 +66,10 @@ class MarketUniverse:
         TradingStyle.INTRADAY,
         TradingStyle.SWING,
     )
-    notes: str = "All listed cash equities on NSE and BSE; the listing catalog must be loaded from a verified source."
+    notes: str = (
+        "All listed cash-equity stocks and ETFs on NSE and BSE that are supported by Groww; "
+        "the listing catalog must be loaded from a verified source."
+    )
 
     def __post_init__(self) -> None:
         known_listings = {(instrument.exchange, instrument.symbol) for instrument in self.instruments}
@@ -78,8 +80,11 @@ class MarketUniverse:
                 raise ValueError(
                     f"{instrument.exchange} is not an allowed exchange in this universe."
                 )
-            if instrument.category is not InstrumentCategory.EQUITY:
-                raise ValueError("Only cash-equity instruments are allowed in this universe.")
+            if instrument.category not in (
+                InstrumentCategory.EQUITY,
+                InstrumentCategory.ETF,
+            ):
+                raise ValueError("Only listed cash equities and ETFs are allowed in this universe.")
 
     def get_instrument(self, symbol: str, exchange: str | None = None) -> Instrument | None:
         normalized = symbol.upper()
@@ -113,16 +118,20 @@ class MarketUniverse:
         return asset_class.upper() in self.excluded_asset_classes
 
 
-DEFAULT_EQUITY_UNIVERSE = MarketUniverse(
-    name="india-equity-paper-universe",
+DEFAULT_MARKET_UNIVERSE = MarketUniverse(
+    name="india-stock-etf-paper-universe",
     market="NSE+BSE",
     country="IN",
     excluded_asset_classes=EXCLUDED_ASSET_CLASSES,
     allowed_styles=(TradingStyle.INTRADAY, TradingStyle.SWING),
 )
 
+# Retained for compatibility with the earlier stock-only domain model.
+DEFAULT_EQUITY_UNIVERSE = DEFAULT_MARKET_UNIVERSE
+
 __all__ = [
     "DEFAULT_EQUITY_UNIVERSE",
+    "DEFAULT_MARKET_UNIVERSE",
     "EXCLUDED_ASSET_CLASSES",
     "Instrument",
     "InstrumentCategory",

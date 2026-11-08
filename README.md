@@ -25,7 +25,7 @@ The virtual environment is local and ignored by Git. If Python was just installe
 
 ## Baseline
 
-AWS Mumbai (`ap-south-1`), one Linux EC2 instance, Docker Compose, persistent storage, backups, monitoring, and tested recovery. No EKS/Kubernetes. Paper trading only. ₹50,000 default simulated capital; 0.5% planned risk per trade; 1.5% daily loss threshold; authenticated Telegram session approval.
+AWS Mumbai (`ap-south-1`), one Linux EC2 instance, Docker Compose, persistent storage, backups, monitoring, and tested recovery. No EKS/Kubernetes. The currently authorized release is paper trading only. Desired instrument scope is all listed Indian stocks and Groww-supported ETFs on NSE and BSE, for intraday and swing. ₹50,000 default simulated capital; 0.5% planned risk per trade; 1.5% daily loss threshold.
 
 ## Current authorization
 
@@ -33,6 +33,6 @@ Repository scaffolding and private GitHub publication are authorized. All local 
 
 ## Next step
 
-Continue with T02 in the master work document. T01's accepted scope is all currently listed cash-equity stocks on both NSE and BSE for intraday and swing paper trading. The exchange listing catalog is not yet loaded; T09 must verify a permitted source and T18 must implement ingestion before scanning can cover all stocks. The repository foundation does not complete T14's startup, configuration, and paper-mode acceptance criteria.
+The desired product includes stocks and ETFs, market/news/global-event analysis, Groww account balance, Telegram approval for each proposed entry batch, and automatic exits under predefined rules. Paper trading comes first; any live release requires separate specification and authorization. See the master work document. T01 is complete, and T02 is next. The exchange listing catalog, Groww account/data capabilities, and market-information sources still need verification and integration. The repository foundation does not complete T14's startup, configuration, and paper-mode acceptance criteria.
 
 No trading application startup or Terraform apply command is provided because those artifacts are not implemented. This repository is local; no remote repository has been created.

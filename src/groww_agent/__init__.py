@@ -2,6 +2,7 @@
 
 from .instruments import (
     DEFAULT_EQUITY_UNIVERSE,
+    DEFAULT_MARKET_UNIVERSE,
     EXCLUDED_ASSET_CLASSES,
     Instrument,
     InstrumentCategory,
@@ -12,6 +13,7 @@ from .instruments import (
 
 __all__ = [
     "DEFAULT_EQUITY_UNIVERSE",
+    "DEFAULT_MARKET_UNIVERSE",
     "EXCLUDED_ASSET_CLASSES",
     "Instrument",
     "InstrumentCategory",
