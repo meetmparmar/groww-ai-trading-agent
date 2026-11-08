@@ -1,14 +1,14 @@
 # Groww AI Trading Agent — Requirements and Work Tracker
 
-Version: 1.1 | Created: 7 November 2026 | Last updated: 8 November 2026
+Version: 1.2 | Created: 7 November 2026 | Last updated: 8 November 2026
 
 ## Project dashboard
 
-- Stage: Requirements gathering; planning only.
-- Requirements and backlog: Drafted and saved; decisions awaiting confirmation.
-- Backlog: 51 tasks; 0 Done, 0 In progress, 51 Pending.
-- Next eligible task: T01 — Define instruments and trading styles.
-- Repository: Local Git scaffold created at `groww-ai-trading-agent/`; application code not implemented.
+- Stage: Requirements gathering; T01 complete.
+- Requirements and backlog: Drafted and saved; decisions awaiting confirmation for later tasks.
+- Backlog: 51 tasks; 1 Done, 0 In progress, 50 Pending.
+- Next eligible task: T02 — Define first strategy.
+- Repository: Local Git scaffold created at `groww-ai-trading-agent/`; T01 domain model implemented, trading runtime not implemented.
 - AWS resources: Not provisioned.
 - Real trading: Not authorized.
 
@@ -28,7 +28,7 @@ Source: the referenced “Refine Trading Agent Prompt” conversation and the pl
 |---|---|
 | R01 | Paper-trading-only v1; simulated funds and orders; no live-order path. |
 | R02 | Groww is the intended integration; verify current API/data capabilities and restrictions. |
-| R03 | Intraday and swing equities are in scope; exact strategies and universe remain open. |
+| R03 | Intraday and swing Indian cash equities listed on both NSE and BSE are in scope; the full listing catalog must be loaded from a verified source. |
 | R04 | Default simulated capital: ₹50,000, subject to session approval. |
 | R05 | Maximum planned risk per trade: 0.5% of approved risk capital. |
 | R06 | Daily loss circuit breaker: 1.5% of approved risk capital. |
@@ -42,6 +42,13 @@ Source: the referenced “Refine Trading Agent Prompt” conversation and the pl
 | R14 | Live trading needs a separate specification, current compliance/broker verification, and authorization. |
 
 At ₹50,000, planned per-trade risk is ₹250 and the daily threshold is ₹750. Loss accounting must include modeled costs and unrealized losses. Planned risk does not guarantee eventual loss magnitude.
+
+### T01 — Initial instrument and style scope
+
+- Allowed for paper-trading candidates: all currently listed Indian cash-equity stocks on both NSE and BSE; do not constrain scanning to a hard-coded shortlist. A listing on each exchange is a distinct instrument, even when the ticker is shared.
+- Allowed styles: intraday and swing. Strategy rules, timeframe, allocation, and overnight handling remain open for T02/T04.
+- Excluded from the trade universe: futures, options, indices, commodities, currencies, mutual funds, unlisted instruments, derivatives, and ETFs. Exchange SME equity listings are in scope when they are listed cash equities, but data availability, liquidity, and eligibility filters remain to be set and verified.
+- `src/groww_agent/instruments.py` models this scope and fails closed when no catalog is loaded. It does not contain or fetch a complete listing catalog; T09 must verify a permitted, current source and T18 must implement ingestion before any scanning can cover all stocks.
 
 ### Exclusions
 
@@ -155,7 +162,7 @@ As the owner, I want explicit strategies, limits, and operating rules so the age
 
 | ID | Task | Acceptance criteria | Dependencies | Status |
 |---|---|---|---|---|
-| T01 | Define instruments and trading styles | Universe, allowed instruments, intraday/swing scope, exclusions recorded | — | Pending |
+| T01 | Define instruments and trading styles | Universe, allowed instruments, intraday/swing scope, exclusions recorded and accepted | — | Done |
 | T02 | Define first strategy | Entry, exit, stop, sizing inputs, timeframe, no-trade rules unambiguous | T01 | Pending |
 | T03 | Set capital/exposure limits | D02 resolved; all required limits specified | T01 | Pending |
 | T04 | Define loss/overnight rules | D03/D08 resolved, including breaker and swing handling | T02–T03 | Pending |
@@ -292,11 +299,9 @@ Overall acceptance: zero real orders/fund movements; every entry traceable to se
 
 ## 12. Completion log
 
-No delivery tasks completed yet.
-
 | Task | Completed date | Result | Validation/evidence | Remaining issues |
 |---|---|---|---|---|
-| — | — | — | — | — |
+| T01 | 8 November 2026 | Owner confirmed all currently listed cash-equity stocks on both NSE and BSE for intraday and swing paper trading; no fixed symbol shortlist. | Unit tests verify both-exchange scope, exchange-qualified duplicate tickers, styles, exclusions, and fail-closed catalog behavior. | Verify a permitted full-listing source in T09 and implement catalog ingestion in T18; strategy and overnight rules remain open. |
 
 ## 13. Decision log
 
@@ -309,6 +314,7 @@ No delivery tasks completed yet.
 | A05 | Live release is separate future scope | Confirmed |
 | A06 | Create local Git repository for future source code and Terraform | Authorized 7 November 2026; scaffold created; no application/runtime or deployable resources implemented |
 | A07 | Publish scaffold privately to GitHub; keep all local repositories inside current workspace | Authorized 8 November 2026; publication pending verification |
+| A08 | Initial paper-trading universe | Confirmed: all currently listed cash-equity stocks on both NSE and BSE, including SME equity listings; intraday and swing styles. Excludes ETFs and non-equity/derivative classes. |
 
 ## 14. Change log
 
@@ -317,9 +323,10 @@ No delivery tasks completed yet.
 | 7 November 2026 | Created persistent master document from the planning specification and 51-task backlog. All delivery tasks remain Pending. |
 | 7 November 2026 | Created local `groww-ai-trading-agent/` Git repository scaffold with source, tests, Compose, Terraform, documentation, and ignore rules. T14 remains Pending because runtime acceptance criteria and prerequisite gates are outstanding. No remote, AWS resources, or trades created. |
 | 8 November 2026 | Moved the authoritative tracker into `docs/WORK-TRACKER.md` for portability, replaced the original external document with a link, and updated repository references. Private GitHub publication authorized; not yet verified. All 51 delivery tasks remain Pending. |
+| 8 November 2026 | Updated T01 per owner direction to cover all currently listed cash equities on NSE and BSE, not a 21-symbol seed list. The domain model requires exchange-qualified listings and fails closed without a loaded catalog; full source verification and ingestion remain T09/T18. Installed Python 3.12.10 for the current Windows user and created/installed the project in its ignored `.venv`; unit tests pass. |
 
 ## 15. Next work session
 
-Start T01: record the allowed instruments, initial stock universe, intraday/swing scope, and exclusions. Resolve material owner choices before marking Done. Then select the next eligible task. Continue planning until implementation is explicitly authorized.
+Start T02: define the first strategy's entry, exit, stop, sizing inputs, timeframe, and no-trade rules. The all-listed NSE/BSE scope still requires data-source verification in T09 and catalog ingestion in T18. Resolve material owner choices before marking later tasks Done. Continue planning until implementation is explicitly authorized.
 
 When resuming in another chat, read this document first and carry forward its current task states and decisions. Updates occur while we work together; this document does not run background work or monitoring.
