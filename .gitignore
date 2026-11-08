@@ -23,6 +23,9 @@ htmlcov/
 
 # Local state and generated artifacts
 data/
+!data/
+data/*
+!data/daily-bars.csv
 logs/
 backups/
 *.db

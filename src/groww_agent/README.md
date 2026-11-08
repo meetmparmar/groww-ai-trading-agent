@@ -1,7 +1,25 @@
 # Application source
 
-The instrument-universe scope/model is implemented in `instruments.py`: all listed cash-equity stocks and Groww-supported ETFs on NSE and BSE, with exchange-qualified listings and no hard-coded symbol shortlist. The actual listing catalog is not loaded yet, so the default universe is empty and safely returns no candidates until a verified source is integrated. No trading runtime or live-order functionality exists.
+The current code contains domain models, a validated paper-only CLI foundation,
+and a SQLite record store. The instrument-universe model covers the requested
+NSE/BSE cash equities and Groww-supported ETFs with exchange-qualified listings
+and swing-only style. The verified listing catalog is not loaded, so the default
+universe is empty; it must fail closed rather than invent candidates.
 
-Planned boundaries: market data, scanner, strategy, AI analysis, independent risk engine, simulated order management, portfolio/reconciliation, Telegram, persistence, monitoring.
+The implemented local foundation validates paper-only configuration and persists
+sessions, signals, approvals, order intents, paper orders, fills, positions,
+append-only audit events, and fail-closed startup recovery state. Daily OHLCV CSV
+data can be validated and scanned into a technical-only watchlist. A portfolio
+snapshot can account for fills when the caller provides current marks; a missing
+position mark makes net liquidation unavailable. Trade entry processing is disabled.
+The intended modular monolith has
+boundaries for market-data adapters, validation, scanner/strategy, optional AI
+explanation, approval, independent risk, paper order simulation, portfolio
+ledger/recovery, Telegram, persistence, and monitoring. There is no live order
+adapter or funded-account integration.
 
-Finalize interfaces and dependencies in T11–T13 before implementing these boundaries. Do not assume one process or container per logical service.
+See `docs/high-level-design.md` and `docs/WORK-TRACKER.md`. `groww-agent start`
+initializes state, records that recovery is required, and exits; it is not a
+continuous trading process. T13 remains blocked by unverified providers,
+simulation assumptions, and numerical strategy exits. Do not treat domain-model
+placeholders as accepted operational values or runtime enforcement.
